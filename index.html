@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmar Localização</title>
+</head>
+<body>
+
+<h2>Confirmar Localização</h2>
+<p>Clique no botão para enviar sua localização.</p>
+
+<button onclick="enviar()">Enviar localização</button>
+
+<p id="msg"></p>
+
+<script>
+function enviar() {
+  if (!navigator.geolocation) {
+    alert("Geolocalização não suportada");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      fetch("/api/localizacao", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        })
+      })
+      .then(() => {
+        document.getElementById("msg").innerText =
+          "Localização enviada com sucesso!";
+      });
+    },
+    function() {
+      alert("Permissão negada");
+    }
+  );
+}
+</script>
+
+</body>
+</html>
